@@ -225,10 +225,10 @@ REST API 對於賬戶、訂單、和市場數據均提供了接口。
 | 200003 | Number of orders breached the limit--委託中訂單數量過多      |
 | 200009 | Please complete the KYC verification before you trade XX--需要通過KYC高級認證才能交易該幣對 |
 | 200004 | Balance insufficient--賬戶餘額不足                           |
-| 400001 | Any of VAEX-API-KEY, VAEX-API-SIGN, VAEX-API-TIMESTAMP, VAEX-API-PASSPHRASE is missing in your request header -- 請求頭中缺少驗籤參數 |
-| 400002 | VAEX-API-TIMESTAMP Invalid -- 請求時間與服務器時差超過5秒      |
-| 400003 | VAEX-API-KEY not exists -- API-KEY 不存在                      |
-| 400004 | VAEX-API-PASSPHRASE error -- API-PASSPHRASE 不正確             |
+| 400001 | Any of EX-API-KEY, EX-API-SIGN, EX-API-TIMESTAMP, EX-API-PASSPHRASE is missing in your request header -- 請求頭中缺少驗籤參數 |
+| 400002 | EX-API-TIMESTAMP Invalid -- 請求時間與服務器時差超過5秒      |
+| 400003 | EX-API-KEY not exists -- API-KEY 不存在                      |
+| 400004 | EX-API-PASSPHRASE error -- API-PASSPHRASE 不正確             |
 | 400005 | Signature error -- [簽名](#99f215f459)錯誤，請檢查您的簽名     |
 | 400006 | The requested ip address is not in the api whitelist -- 請求IP不在API白名單中 |
 | 400007 | Access Denied -- API權限不足，無法訪問該URI目標地址。        |
@@ -310,11 +310,11 @@ Key和Secret由Vaex隨機生成並提供，Passphrase是您在創建API時使用
 
 Rest請求頭必須包含以下內容:
 
-* **VAEX-API-KEY** API-KEY以字符串傳遞
-* **VAEX-API-SIGN** [簽名](#99f215f459)
-* **VAEX-API-TIMESTAMP** 請求的時間戳
-* **VAEX-API-PASSPHRASE** 創建API時填的API-KEY的密碼
-* **VAEX-API-KEY-VERSION** API-KEY版本號，可通過[API管理](https://www.vaex.cc/account/api)頁面查看版本號
+* **EX-API-KEY** API-KEY以字符串傳遞
+* **EX-API-SIGN** [簽名](#99f215f459)
+* **EX-API-TIMESTAMP** 請求的時間戳
+* **EX-API-PASSPHRASE** 創建API時填的API-KEY的密碼
+* **EX-API-KEY-VERSION** API-KEY版本號，可通過[API管理](https://www.vaex.cc/account/api)頁面查看版本號
 
 ### 簽名
 
@@ -355,11 +355,11 @@ Rest請求頭必須包含以下內容:
         
     passphrase = base64.b64encode(hmac.new(api_secret.encode('utf-8'), api_passphrase.encode('utf-8'), hashlib.sha256).digest())    
     headers = {
-        "VAEX-API-SIGN": signature,
-        "VAEX-API-TIMESTAMP": str(now),
-        "VAEX-API-KEY": api_key,
-        "VAEX-API-PASSPHRASE": passphrase,
-        "VAEX-API-KEY-VERSION": "2"
+        "EX-API-SIGN": signature,
+        "EX-API-TIMESTAMP": str(now),
+        "EX-API-KEY": api_key,
+        "EX-API-PASSPHRASE": passphrase,
+        "EX-API-KEY-VERSION": "2"
     }
     response = requests.request('get', url, headers=headers)
     print(response.status_code)
@@ -376,31 +376,31 @@ Rest請求頭必須包含以下內容:
     passphrase = base64.b64encode(
         hmac.new(api_secret.encode('utf-8'), api_passphrase.encode('utf-8'), hashlib.sha256).digest())
     headers = {
-        "VAEX-API-SIGN": signature,
-        "VAEX-API-TIMESTAMP": str(now),
-        "VAEX-API-KEY": api_key,
-        "VAEX-API-PASSPHRASE": passphrase,
-        "VAEX-API-KEY-VERSION": 2,
+        "EX-API-SIGN": signature,
+        "EX-API-TIMESTAMP": str(now),
+        "EX-API-KEY": api_key,
+        "EX-API-PASSPHRASE": passphrase,
+        "EX-API-KEY-VERSION": 2,
         "Content-Type": "application/json" # specifying content type or using json=data in request
     }
     response = requests.request('post', url, headers=headers, data=data_json)
     print(response.status_code)
     print(response.json())
 ```
-請求頭中的 **VAEX-API-SIGN**:
+請求頭中的 **EX-API-SIGN**:
 
 1. 使用 API-Secret 對
     {timestamp + method + endpoint + body} 拼接的字符串進行**HMAC-sha256**加密。
 2. 再將加密內容使用 **base64** 編碼。
 
-請求頭中的 **VAEX-API-PASSPHRASE**:
+請求頭中的 **EX-API-PASSPHRASE**:
 
 1. 對於V1版的API-KEY，請使用明文傳遞
-2. 對於V2版的API-KEY，需要將VAEX-API-KEY-VERSION指定爲2，並將passphrase使用API-Secret進行**HMAC-sha256**加密，再將加密內容通過**base64**編碼後傳遞
+2. 對於V2版的API-KEY，需要將EX-API-KEY-VERSION指定爲2，並將passphrase使用API-Secret進行**HMAC-sha256**加密，再將加密內容通過**base64**編碼後傳遞
 
 注意：
 
-* 加密的 timestamp 需要和請求頭中的VAEX-API-TIMESTAMP保持一致
+* 加密的 timestamp 需要和請求頭中的EX-API-TIMESTAMP保持一致
 * 用於加密的body需要和請求中的Request Body的內容保持一致
 * 請求方法需要大寫
 * 對於 GET, DELETE 請求，endpoint 需要包含請求的參數（/api/v1/deposit-addresses?currency=BTC）。如果沒有請求體（通常用於GET請求），則請求體使用空字符串””。
@@ -410,18 +410,18 @@ Rest請求頭必須包含以下內容:
 ```python
 #Example for Create Deposit Address
 
-curl -H "Content-Type:application/json" -H "VAEX-API-KEY:5c2db93503aa674c74a31734" -H "VAEX-API-TIMESTAMP:1547015186532" -H "VAEX-API-PASSPHRASE:QWIxMjM0NTY3OCkoKiZeJSQjQA==" -H "VAEX-API-SIGN:7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4="  -H "VAEX-API-KEY-VERSION:2"
+curl -H "Content-Type:application/json" -H "EX-API-KEY:5c2db93503aa674c74a31734" -H "EX-API-TIMESTAMP:1547015186532" -H "EX-API-PASSPHRASE:QWIxMjM0NTY3OCkoKiZeJSQjQA==" -H "EX-API-SIGN:7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4="  -H "EX-API-KEY-VERSION:2"
 -X POST -d '{"currency":"BTC"}' http://api.vaex.com/api/v1/deposit-addresses
 
-VAEX-API-KEY = 5c2db93503aa674c74a31734
-VAEX-API-SECRET = f03a5284-5c39-4aaa-9b20-dea10bdcf8e3
-VAEX-API-PASSPHRASE = QWIxMjM0NTY3OCkoKiZeJSQjQA==
-VAEX-API-KEY-VERSION = 2
+EX-API-KEY = 5c2db93503aa674c74a31734
+EX-API-SECRET = f03a5284-5c39-4aaa-9b20-dea10bdcf8e3
+EX-API-PASSPHRASE = QWIxMjM0NTY3OCkoKiZeJSQjQA==
+EX-API-KEY-VERSION = 2
 TIMESTAMP = 1547015186532
 METHOD = POST
 ENDPOINT = /api/v1/deposit-addresses
 STRING-TO-SIGN = 1547015186532POST/api/v1/deposit-addresses{"currency":"BTC"}
-VAEX-API-SIGN = 7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4=
+EX-API-SIGN = 7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4=
 ```
 
 <aside class="spacer16"></aside>
@@ -429,7 +429,7 @@ VAEX-API-SIGN = 7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4=
 
 ### 選擇時間戳
 
-請求頭中的 **VAEX-API-TIMESTAMP** 必須爲[Unix 時間](http://en.wikipedia.org/wiki/Unix_time)，精確到毫秒，例如，1547015186532。
+請求頭中的 **EX-API-TIMESTAMP** 必須爲[Unix 時間](http://en.wikipedia.org/wiki/Unix_time)，精確到毫秒，例如，1547015186532。
 
 服務器請求的時間戳與API服務器時差必須控制在5秒以內，否則請求會因過期而被服務器拒絕。如果服務器與API服務器之間存在時間偏差，請使用平臺提供的服務器時間接口，獲取API[服務器的時間](#cfc829dcfc)。
 
