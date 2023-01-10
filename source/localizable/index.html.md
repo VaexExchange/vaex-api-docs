@@ -239,10 +239,10 @@ Code | Meaning
 | 200003 | Number of orders breached the limit      |
 | 200009 | Please complete the KYC verification before you trade XX |
 | 200004 | Balance insufficient                           |
-| 400001 | Any of EX-API-KEY, EX-API-SIGN, EX-API-TIMESTAMP, EX-API-PASSPHRASE is missing in your request header |
-| 400002 | EX-API-TIMESTAMP Invalid      |
-| 400003 | EX-API-KEY not exists                      |
-| 400004 | EX-API-PASSPHRASE error             |
+| 400001 | Any of VAEX-API-KEY, VAEX-API-SIGN, VAEX-API-TIMESTAMP, VAEX-API-PASSPHRASE is missing in your request header |
+| 400002 | VAEX-API-TIMESTAMP Invalid      |
+| 400003 | VAEX-API-KEY not exists                      |
+| 400004 | VAEX-API-PASSPHRASE error             |
 | 400005 | Signature error     |
 | 400006 | The requested ip address is not in the api whitelist |
 | 400007 | Access Denied        |
@@ -328,11 +328,11 @@ Please refer to the documentation below to see what API key permissions are requ
 
 All private REST requests must contain the following headers:
 
-* **EX-API-KEY** The API key as a string.
-* **EX-API-SIGN** The base64-encoded signature (see Signing a Message).
-* **EX-API-TIMESTAMP** A timestamp for your request.
-* **EX-API-PASSPHRASE** The passphrase you specified when creating the API key.
-* **EX-API-KEY-VERSION** You can check the version of API key on the page of [API Management](https://www.vaex.com/account/api)
+* **VAEX-API-KEY** The API key as a string.
+* **VAEX-API-SIGN** The base64-encoded signature (see Signing a Message).
+* **VAEX-API-TIMESTAMP** A timestamp for your request.
+* **VAEX-API-PASSPHRASE** The passphrase you specified when creating the API key.
+* **VAEX-API-KEY-VERSION** You can check the version of API key on the page of [API Management](https://www.vaex.com/account/api)
 
 ### Signing a Message
 
@@ -372,11 +372,11 @@ All private REST requests must contain the following headers:
         hmac.new(api_secret.encode('utf-8'), str_to_sign.encode('utf-8'), hashlib.sha256).digest())
     passphrase = base64.b64encode(hmac.new(api_secret.encode('utf-8'), api_passphrase.encode('utf-8'), hashlib.sha256).digest())
     headers = {
-        "EX-API-SIGN": signature,
-        "EX-API-TIMESTAMP": str(now),
-        "EX-API-KEY": api_key,
-        "EX-API-PASSPHRASE": passphrase,
-        "EX-API-KEY-VERSION": "2"
+        "VAEX-API-SIGN": signature,
+        "VAEX-API-TIMESTAMP": str(now),
+        "VAEX-API-KEY": api_key,
+        "VAEX-API-PASSPHRASE": passphrase,
+        "VAEX-API-KEY-VERSION": "2"
     }
     response = requests.request('get', url, headers=headers)
     print(response.status_code)
@@ -393,11 +393,11 @@ All private REST requests must contain the following headers:
     passphrase = base64.b64encode(
         hmac.new(api_secret.encode('utf-8'), api_passphrase.encode('utf-8'), hashlib.sha256).digest())
     headers = {
-        "EX-API-SIGN": signature,
-        "EX-API-TIMESTAMP": str(now),
-        "EX-API-KEY": api_key,
-        "EX-API-PASSPHRASE": passphrase,
-        "EX-API-KEY-VERSION": 2
+        "VAEX-API-SIGN": signature,
+        "VAEX-API-TIMESTAMP": str(now),
+        "VAEX-API-KEY": api_key,
+        "VAEX-API-PASSPHRASE": passphrase,
+        "VAEX-API-KEY-VERSION": 2
         "Content-Type": "application/json" # specifying content type or using json=data in request
     }
     response = requests.request('post', url, headers=headers, data=data_json)
@@ -405,19 +405,19 @@ All private REST requests must contain the following headers:
     print(response.json())
 ```
 
-For the header of **EX-API-SIGN**:
+For the header of **VAEX-API-SIGN**:
 
 * Use API-Secret to encrypt the prehash string {timestamp+method+endpoint+body} with sha256 HMAC. The request body is a JSON string and need to be the same with the parameters passed by the API.
 * After that, use base64-encode to encrypt the result in step 1 again.
 
-For the **EX-API-PASSPHRASE** of the header:
+For the **VAEX-API-PASSPHRASE** of the header:
 
 * For API key-V1.0, please pass requests in plaintext.
-* For API key-V2.0, please Specify **EX-API-KEY-VERSION** as **2** --> Encrypt passphrase with HMAC-sha256 via API-Secret --> Encode contents by base64 before you pass the request."
+* For API key-V2.0, please Specify **VAEX-API-KEY-VERSION** as **2** --> Encrypt passphrase with HMAC-sha256 via API-Secret --> Encode contents by base64 before you pass the request."
 
 Notice:
 
-* The encrypted timestamp shall be consistent with the EX-API-TIMESTAMP field in the request header.
+* The encrypted timestamp shall be consistent with the VAEX-API-TIMESTAMP field in the request header.
 * The body to be encrypted shall be consistent with the content of the Request Body.  
 * The Method should be UPPER CASE.
 * For GET, DELETE request, the endpoint needs to contain the query string. e.g. /api/v1/deposit-addresses?currency=XBT. The body is "" if there is no request body (typically for GET requests).
@@ -427,18 +427,18 @@ Notice:
 ```python
 #Example for Create Deposit Address
 
-curl -H "Content-Type:application/json" -H "EX-API-KEY:5c2db93503aa674c74a31734" -H "EX-API-TIMESTAMP:1547015186532" -H "EX-API-PASSPHRASE:QWIxMjM0NTY3OCkoKiZeJSQjQA==" -H "EX-API-SIGN:7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4=" -H "EX-API-KEY-VERSION:2"
+curl -H "Content-Type:application/json" -H "VAEX-API-KEY:5c2db93503aa674c74a31734" -H "VAEX-API-TIMESTAMP:1547015186532" -H "VAEX-API-PASSPHRASE:QWIxMjM0NTY3OCkoKiZeJSQjQA==" -H "VAEX-API-SIGN:7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4=" -H "VAEX-API-KEY-VERSION:2"
 -X POST -d '{"currency":"BTC"}' http://api.vaex.com/api/v1/deposit-addresses
 
-EX-API-KEY = 5c2db93503aa674c74a31734
-EX-API-SECRET = f03a5284-5c39-4aaa-9b20-dea10bdcf8e3
-EX-API-PASSPHRASE = QWIxMjM0NTY3OCkoKiZeJSQjQA==
-EX-API-KEY-VERSION = 2
+VAEX-API-KEY = 5c2db93503aa674c74a31734
+VAEX-API-SECRET = f03a5284-5c39-4aaa-9b20-dea10bdcf8e3
+VAEX-API-PASSPHRASE = QWIxMjM0NTY3OCkoKiZeJSQjQA==
+VAEX-API-KEY-VERSION = 2
 TIMESTAMP = 1547015186532
 METHOD = POST
 ENDPOINT = /api/v1/deposit-addresses
 STRING-TO-SIGN = 1547015186532POST/api/v1/deposit-addresses{"currency":"BTC"}
-EX-API-SIGN = 7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4=
+VAEX-API-SIGN = 7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4=
 ```
 
 <aside class="spacer16"></aside>
@@ -446,7 +446,7 @@ EX-API-SIGN = 7QP/oM0ykidMdrfNEUmng8eZjg/ZvPafjIqmxiVfYu4=
 
 ### Selecting a Timestamp
 
-The **EX-API-TIMESTAMP** header MUST be number of **milliseconds** since Unix Epoch in UTC. e.g. 1547015186532
+The **VAEX-API-TIMESTAMP** header MUST be number of **milliseconds** since Unix Epoch in UTC. e.g. 1547015186532
 
 Decimal values are allowed, e.g. 1547015186532. But you need to be aware that timestamp between match and order is **nanosecond**.
 
