@@ -577,8 +577,6 @@ endAt     | long   | [可選] 截止時間（毫秒）
 <aside class="notice">您只能獲取 24 小時時間範圍內的數據（即：查詢時，開始時間到結束時間的時間範圍不能超過24小時）。若超出時間範圍，系統會報錯。如果您只指定了結束時間，沒有指定開始時間，系統將按照24小時的範圍自動計算開始時間（開始時間=結束時間-24小時）並返回相應數據，反之亦然。</aside>
 <aside class="notice">最多獲取1年的歷史數據，如需要獲取更久遠的歷史數據，請提交工單查詢：https://vaex.zendesk.com/hc/en-us/requests/new</aside>
 
-
-
 ### 返回值
 字段 | 含義
 --------- | -------
@@ -604,6 +602,45 @@ Deposit  | 獲取充值入賬記錄
 Withdrawal  | 獲取提現記錄
 Transfer | 獲取資金劃轉記錄
 Trade_Exchange | 獲取幣幣交易記錄
+
+
+
+## 獲取可劃轉資金
+```json
+{
+    "currency":"BTC",
+    "balance":"0",
+    "available":"0",
+    "holds":"0",
+    "transferable":"0"
+}
+```
+此接口可獲取指定賬戶和幣種下的可劃轉的資金。
+
+### HTTP請求
+`GET /api/v1/accounts/transferable`
+
+### 請求示例
+`GET /api/v1/accounts/transferable?currency=BTC&type=MAIN`
+
+### API權限
+此接口需要`通用權限`。
+
+### 請求參數
+
+請求參數 | 類型 | 是否必須 |含義
+--------- | ------- |  ------- | -------
+currency | String | 是 | [幣種](#47f0f7e8df)
+type | String | 是 | 賬戶類型：`MAIN`、`TRADE`
+
+### 返回值
+字段 | 含義
+--------- | -------
+currency | 幣種
+balance | 資金總額
+available | 可用資金
+holds | 凍結資金
+transferable | 可劃轉資金
 
 
 
@@ -721,6 +758,75 @@ memo | 地址標籤memo(tag)，如果返回爲空，則該幣種沒有memo。對
 chain | 幣種的鏈名
 contractAddress | 合約地址
 
+
+
+## 獲取充值列表
+```json
+{
+    "code": "200000",
+    "data": {
+        "currentPage": 1,
+        "pageSize": 50,
+        "totalNum": 1,
+        "totalPage": 1,
+        "items": [
+            {
+                "currency": "XRP",
+                "chain": "xrp",
+                "status": "SUCCESS",
+                "address": "rNFugeoj3ZN8Wv6xhuLegUBBPXKCyWLRkB",
+                "memo": "1919537769",
+                "isInner": false,
+                "amount": "20.50000000",
+                "fee": "0.00000000",
+                "walletTxId": "2C24A6D5B3E7D5B6AA6534025B9B107AC910309A98825BF5581E25BEC94AD83B@e8902757998fc352e6c9d8890d18a71c",
+                "createdAt": 1666600519000,
+                "updatedAt": 1666600549000,
+                "remark": "Deposit"
+            }
+        ]
+    }
+}
+```
+此端點，可獲取充值分頁列表。
+返回值是[分頁](#95d51b1f3b)後的數據，根據時間降序排序。
+
+### HTTP請求
+`GET /api/v1/deposits`
+
+### 請求示例
+`GET /api/v1/deposits`
+
+### API權限
+此接口需要**通用權限**。
+
+### 頻率限制
+此接口針對每個賬號請求頻率限制爲**6次/3s**
+
+<aside class="notice">這個接口需要使用分頁</aside>
+
+### 請求參數
+請求參數 | 類型 | 是否必須 | 含義 |
+--------- | ------- | -----------| -----------|
+currency | String | 否 | [幣種](#47f0f7e8df)
+startAt| long | 否 | 開始時間（毫秒）
+endAt| long | 否 | 截止時間（毫秒）
+status | String | 否 | 狀態。可選值: `PROCESSING`, `SUCCESS`, `FAILURE`
+
+### 返回值
+字段 | 含義
+--------- | -------
+address | 充值地址
+memo | 地址標籤memo(tag)，如果返回爲空，則該幣種沒有memo。對於沒有memo的幣種，在[提現](#081737423d)的時候不可以傳遞memo
+amount | 充值金額
+fee | 充值手續費
+currency | 幣種
+isInner | 是否爲平臺內部充值
+walletTxId | 錢包交易Id
+status | 狀態
+remark | 備註
+createdAt | 創建時間
+updatedAt | 修改時間
 
 
 
@@ -875,6 +981,27 @@ feeDeductType | String | 否 | 提現手續費扣除方式: `INTERNAL` 或 `EXTE
 字段 | 含義
 --------- | -------
 withdrawalId | 提現Id 唯一標識
+
+
+
+
+## 取消提現
+提現狀態爲提現中纔可以取消。
+
+### HTTP請求
+`DELETE /api/v1/withdrawals/{withdrawalId}`
+
+### 請求示例
+`DELETE /api/v1/withdrawals/5bffb63303aa675e8bbe18f9`
+
+### API權限
+此接口需要**提現權限**。
+
+### 請求參數
+請求參數 | 類型 | 含義
+--------- | ------- | -------
+withdrawalId | String | 路徑參數，[提現Id](#5a3e3653c8-2) 唯一標識
+
 
 
 
@@ -2029,7 +2156,6 @@ Vaex平臺上的訂單分爲兩種類型：Taker 和 Maker。Taker單會與買�
     "priceIncrement": "0.000001",
     "priceLimitRate": "0.1",
     "minFunds": "0.1",
-    "isMarginEnabled": true,
     "enableTrading": true
   },
   {
@@ -2048,7 +2174,6 @@ Vaex平臺上的訂單分爲兩種類型：Taker 和 Maker。Taker單會與買�
     "priceIncrement": "0.0000001",
     "priceLimitRate": "0.1",
     "minFunds": "0.1",
-    "isMarginEnabled": true,
     "enableTrading": true
   }
 ]
@@ -2084,7 +2209,6 @@ market | String | 否 | [交易市場](#5666d37373) |
 | priceIncrement | 限價單：價格增量，下單的price必須爲價格增量的正整數倍 |
 | feeCurrency    | 交易計算手續費的幣種                   |
 | enableTrading  | 是否可以用於交易                      |
-| isMarginEnabled | 是否支持槓桿                        |
 | priceLimitRate | 價格保護閾值                          |
 | minFunds       | 最小交易金額                          |
 
@@ -2410,9 +2534,7 @@ turnover | 成交額
     "withdrawalMinSize": "2000",
     "withdrawalMinFee": "1000",
     "isWithdrawEnabled": true,
-    "isDepositEnabled": true,
-    "isMarginEnabled": false,
-    "isDebitEnabled": false
+    "isDepositEnabled": true
   },
   {
     "currency": "LOKI",
@@ -2424,9 +2546,7 @@ turnover | 成交額
     "withdrawalMinSize": "2",
     "withdrawalMinFee": "2",
     "isWithdrawEnabled": true,
-    "isDepositEnabled": true,
-    "isMarginEnabled": false,
-    "isDebitEnabled": true
+    "isDepositEnabled": true
   }
 ]
 ```
@@ -2453,8 +2573,6 @@ turnover | 成交額
 |withdrawalMinFee| 提現最小手續費 |
 |isWithdrawEnabled| 是否可提現 |
 |isDepositEnabled| 是否可充值|
-|isMarginEnabled|是否支持槓桿|
-|isDebitEnabled|是否支持借貸|
 
 
 ### 幣種標識(currency code)
@@ -2481,9 +2599,7 @@ turnover | 成交額
   "withdrawalMinSize": "0.001",
   "withdrawalMinFee": "0.0006",
   "isWithdrawEnabled": true,
-  "isDepositEnabled": true,
-  "isMarginEnabled": true,
-  "isDebitEnabled": true
+  "isDepositEnabled": true
 }
 ```
 此接口，返回可交易幣種的貨幣詳細信息
@@ -2513,8 +2629,6 @@ turnover | 成交額
 |withdrawalMinFee| 提現最小手續費 |
 |isWithdrawEnabled| 是否可提現 |
 |isDepositEnabled| 是否可充值|
-|isMarginEnabled|是否支持槓桿|
-|isDebitEnabled|是否支持借貸|
 
 ## 幣種詳情(推薦使用)
 ```json
@@ -2527,8 +2641,6 @@ turnover | 成交額
         "precision": 8,
         "confirms": null,
         "contractAddress": null,
-        "isMarginEnabled": true,
-        "isDebitEnabled": true,
         "chains": [
             {
                 "chainName": "BTC",
@@ -2576,8 +2688,8 @@ turnover | 成交額
 |withdrawalMinFee| 提現最小手續費 |
 |isWithdrawEnabled| 是否可提現 |
 |isDepositEnabled| 是否可充值|
-|isMarginEnabled|是否支持槓桿|
-|isDebitEnabled|是否支持借貸|
+
+
 
 ## 法幣換算價格
 此接口，返回法幣換算後的價格

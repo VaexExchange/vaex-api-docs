@@ -622,6 +622,46 @@ Trade_Exchange | Trade
 
 
 
+## Get the Transferable
+
+```json
+ {
+    "currency": "BTC",
+    "balance": "0",
+    "available": "0",
+    "holds": "0",
+    "transferable": "0"
+}
+```
+This endpoint returns the transferable balance of a specified account.
+
+
+### HTTP REQUEST
+`GET /api/v1/accounts/transferable`
+
+### Example
+`GET /api/v1/accounts/transferable?currency=BTC&type=MAIN`
+
+### API KEY PERMISSIONS
+This endpoint requires the `General` permission.
+
+### PARAMETERS
+Param | Type | Mandatory | Description
+--------- | ------- | ------- | -------
+currency | String | Yes |[currency](#get-currencies)
+type | String | Yes |The account type: `MAIN`, `TRADE`
+
+### RESPONSES
+Field | Description
+--------- | -------
+currency | Currency 
+balance | Total funds in an account.
+available | Funds available to withdraw or trade.
+holds | Funds on hold (not available for use).
+transferable | Funds available to transfer.
+
+
+
 
 ## Inner Transfer
 ```json
@@ -739,6 +779,113 @@ memo | Address remark. If there’s no remark, it is empty. When you [withdraw](
 chain | The chain name of currency.
 contractAddress | The token contract address.
 
+
+
+
+## Get Deposit Address
+```json
+{
+	"address": "0x78d3ad1c0aa1bf068e19c94a2d7b16c9c0fcd8b1",
+	"memo": "5c247c8a03aa677cea2a251d",        //tag
+	"chain": "OMNI"
+}
+```
+
+Get a deposit address for the currency you intend to deposit. If the returned data is null, you may need to create a deposit address first.
+
+### HTTP REQUEST
+`GET /api/v1/deposit-addresses`
+
+### Example
+`GET /api/v1/deposit-addresses`
+
+### API KEY PERMISSIONS
+This endpoint requires the **"General"** permission.
+
+### PARAMETERS
+Param | Type | Description
+--------- | ------- | -----------
+currency | String | Currency
+chain | String | *[Optional]* The chain name of currency, e.g. The available value for USDT are OMNI, ERC20, TRC20, default is ERC20. The available value for BTC are Native, Segwit, TRC20, the parameters are bech32, btc, trx, default is Native. This only apply for multi-chain currency, and there is no need for single chain currency. 
+
+### RESPONSES
+Field | Description
+--------- | ------- 
+address | Deposit address
+memo | Address remark. If there’s no remark, it is empty. When you [withdraw](#apply-withdraw) from other platforms to the KuCoin, you need to fill in memo(tag). If you do not fill memo (tag), your deposit may not be available, please be cautious.
+chain | The chain name of currency, e.g. The available value for USDT are OMNI, ERC20, TRC20, default is ERC20. The available value for BTC are Native, Segwit, TRC20, the parameters are bech32, btc, trx, default is Native. 
+
+
+## Get Deposit List
+```json
+{
+    "code": "200000",
+    "data": {
+        "currentPage": 1,
+        "pageSize": 50,
+        "totalNum": 1,
+        "totalPage": 1,
+        "items": [
+            {
+                "currency": "XRP",
+                "chain": "xrp",
+                "status": "SUCCESS",
+                "address": "rNFugeoj3ZN8Wv6xhuLegUBBPXKCyWLRkB",
+                "memo": "1919537769",
+                "isInner": false,
+                "amount": "20.50000000",
+                "fee": "0.00000000",
+                "walletTxId": "2C24A6D5B3E7D5B6AA6534025B9B107AC910309A98825BF5581E25BEC94AD83B@e8902757998fc352e6c9d8890d18a71c",
+                "createdAt": 1666600519000,
+                "updatedAt": 1666600549000,
+                "remark": "Deposit"
+            }
+        ]
+    }
+}
+```
+
+Request via this endpoint to get deposit list
+Items are paginated and sorted to show the latest first. See the [Pagination](#pagination) section for retrieving additional entries after the first page.
+
+
+### HTTP REQUEST
+`GET /api/v1/deposits`
+
+### Example
+`GET /api/v1/deposits`
+
+### API KEY PERMISSIONS
+This endpoint requires the **"General"** permission.
+
+### REQUEST RATE LIMIT
+This API is restricted for each account, the request rate limit is **6 times/3s**.
+
+<aside class="notice">This request is paginated.</aside>
+
+### PARAMETERS
+Param | Type | Mandatory | Description |  
+--------- | ------- | -----------| -----------|
+currency | String | No | Currency
+startAt| long | No | Start time (milisecond)
+endAt| long | No | End time (milisecond)
+status | String | No | Status. Available value: `PROCESSING`, `SUCCESS`, and `FAILURE`
+
+### RESPONSES
+Field | Description
+--------- | ------- | -----------
+address | Deposit address
+memo |Address remark. If there’s no remark, it is empty. When you [withdraw](#apply-withdraw) from other platforms to the KuCoin, you need to fill in memo(tag). If you do not fill memo (tag), your deposit may not be available, please be cautious.
+amount | Deposit amount
+fee | Fees charged for deposit
+currency | Currency
+chain | The chain of currency
+isInner | Internal deposit or not
+walletTxId | Wallet Txid
+status | Status
+remark | remark
+createdAt | Creation time of the database record
+updatedAt | Update time of the database record
 
 
 
@@ -898,6 +1045,26 @@ feeDeductType | String | No | Withdrawal fee deduction type: `INTERNAL` or `EXTE
 Field | Description
 --------- | -------
 withdrawalId | Withdrawal id
+
+
+
+## Cancel Withdrawal
+Only withdrawals requests of **PROCESSING** status could be canceled.
+
+### HTTP REQUEST
+`DELETE /api/v1/withdrawals/{withdrawalId}`
+
+### Example
+`DELETE /api/v1/withdrawals/5bffb63303aa675e8bbe18f9`
+
+### API KEY PERMISSIONS
+This endpoint requires the **"Transfer"** permission.
+
+### PARAMETERS
+Param | Type | Description
+--------- | ------- | -----------
+withdrawalId | String | Path parameter, a unique ID for a withdrawal order
+
 
 
 
@@ -2107,7 +2274,6 @@ Signature is not required for this part
             "priceIncrement": "0.00001",
             "priceLimitRate": "0.1",
             "minFunds": "0.1",
-            "isMarginEnabled": true,
             "enableTrading": true
         },
         {
@@ -2126,7 +2292,6 @@ Signature is not required for this part
             "priceIncrement": "0.000001",
             "priceLimitRate": "0.1",
             "minFunds": "0.1",
-            "isMarginEnabled": true,
             "enableTrading": true
         }
     ]
@@ -2164,7 +2329,6 @@ quoteIncrement | The increment of the funds required to place a market order. Th
 priceIncrement |  The increment of the price required to place a limit order. The value shall be a positive multiple of the priceIncrement.
 feeCurrency | The currency of charged fees.
 enableTrading |  Available for transaction or not.
-isMarginEnabled |  Available for margin or not.
 priceLimitRate | Threshold for price portection
 minFunds | the minimum spot trading amounts
 
@@ -2475,9 +2639,7 @@ turnover | Transaction amount
     "withdrawalMinSize": "2000",
     "withdrawalMinFee": "1000",
     "isWithdrawEnabled": true,
-    "isDepositEnabled": true,
-    "isMarginEnabled": false,
-    "isDebitEnabled": false
+    "isDepositEnabled": true
   },
   {
     "currency": "LOKI",
@@ -2489,9 +2651,7 @@ turnover | Transaction amount
     "withdrawalMinSize": "2",
     "withdrawalMinFee": "2",
     "isWithdrawEnabled": true,
-    "isDepositEnabled": true,
-    "isMarginEnabled": false,
-    "isDebitEnabled": true
+    "isDepositEnabled": true
   }
 ]
 ```
@@ -2520,8 +2680,7 @@ Request via this endpoint to get the currency list.
 |withdrawalMinFee|  Minimum fees charged for withdrawal |
 |isWithdrawEnabled| Support withdrawal or not |
 |isDepositEnabled| Support deposit or not |
-|isMarginEnabled| Support margin or not |
-|isDebitEnabled| Support debit or not |
+
 
 
 **CURRENCY CODES**
@@ -2551,9 +2710,7 @@ The "**currency**" of XRB is "XRB", if the "**name**" of XRB is changed into "**
   "withdrawalMinSize": "0.001",
   "withdrawalMinFee": "0.0006",
   "isWithdrawEnabled": true,
-  "isDepositEnabled": true,
-  "isMarginEnabled": true,
-  "isDebitEnabled": true
+  "isDepositEnabled": true
 }
 ```
 Request via this endpoint to get the currency details of a specified currency
@@ -2585,8 +2742,7 @@ chain | String | *[Optional]* Support for querying the chain of currency, e.g.  
 |withdrawalMinFee| Minimum fees charged for withdrawal |
 |isWithdrawEnabled| Support withdrawal or not |
 |isDepositEnabled| Support deposit or not |
-|isMarginEnabled| Support margin or not |
-|isDebitEnabled| Support debit or not |
+
 
 ## Get Currency Detail(Recommend)
 ```json
@@ -2599,8 +2755,6 @@ chain | String | *[Optional]* Support for querying the chain of currency, e.g.  
         "precision": 8,
         "confirms": null,
         "contractAddress": null,
-        "isMarginEnabled": true,
-        "isDebitEnabled": true,
         "chains": [
             {
                 "chainName": "BTC",
@@ -2648,8 +2802,6 @@ chain | String | *[Optional]* Support for querying the chain of currency, return
 |withdrawalMinFee| Minimum fees charged for withdrawal |
 |isWithdrawEnabled| Support withdrawal or not |
 |isDepositEnabled| Support deposit or not |
-|isMarginEnabled| Support margin or not |
-|isDebitEnabled| Support debit or not |
 
 ## Get Fiat Price
 ```json
