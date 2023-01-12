@@ -942,9 +942,9 @@ currency | 幣種
 availableAmount | 可提現的金額
 remainAmount | 當日剩餘可提現的額度
 withdrawMinSize | 最小提現金額
-limitBTCAmount | 當日剩餘可提現的額度，摺合爲BTC
+limitHKDAmount | 當日剩餘可提現的額度，摺合爲HKD
 innerWithdrawMinFee | 內部提現手續費
-usedBTCAmount | 當日BTC摺合提現
+usedHKDAmount | 當日HKD摺合提現
 isWithdrawEnabled | 是否可提現
 withdrawMinFee | 最小提現手續費
 precision | 提現的精度

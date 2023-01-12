@@ -1003,9 +1003,9 @@ currency | Currency
 availableAmount | Current available withdrawal amount
 remainAmount | Remaining amount available to withdraw the current day
 withdrawMinSize | Minimum withdrawal amount
-limitBTCAmount | Total BTC amount available to withdraw the current day
+limitHKDAmount | Total HKD amount available to withdraw the current day
 innerWithdrawMinFee | Fees for internal withdrawal
-usedBTCAmount | The estimated BTC amount (based on the daily fiat limit) that can be withdrawn within the current day
+usedHKDAmount | The estimated HKD amount (based on the daily fiat limit) that can be withdrawn within the current day
 isWithdrawEnabled | Is the withdraw function enabled or not
 withdrawMinFee | Minimum withdrawal fee
 precision | Floating point precision.
