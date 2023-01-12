@@ -62,10 +62,10 @@ function testGetAccounts(){
 
     $headers = [];
     $headers[] = "Content-Type:application/json";
-    $headers[] = "EX-API-KEY:".$key;
-    $headers[] = "EX-API-TIMESTAMP:".$timestamp;
-    $headers[] = "EX-API-PASSPHRASE:".$passphrase;
-    $headers[] = "EX-API-SIGN:".signature($endpoint, $body, $timestamp, 'GET');
+    $headers[] = "VAEX-API-KEY:".$key;
+    $headers[] = "VAEX-API-TIMESTAMP:".$timestamp;
+    $headers[] = "VAEX-API-PASSPHRASE:".$passphrase;
+    $headers[] = "VAEX-API-SIGN:".signature($endpoint, $body, $timestamp, 'GET');
 
     $requestPath = $host . $endpoint;
 
@@ -87,10 +87,10 @@ function testGetDepositAddress(){
 
     $headers = [];
     $headers[] = "Content-Type:application/json";
-    $headers[] = "EX-API-KEY:".$key;
-    $headers[] = "EX-API-TIMESTAMP:".$timestamp;
-    $headers[] = "EX-API-PASSPHRASE:".$passphrase;
-    $headers[] = "EX-API-SIGN:".signature($endpoint, $body, $timestamp, 'GET');
+    $headers[] = "VAEX-API-KEY:".$key;
+    $headers[] = "VAEX-API-TIMESTAMP:".$timestamp;
+    $headers[] = "VAEX-API-PASSPHRASE:".$passphrase;
+    $headers[] = "VAEX-API-SIGN:".signature($endpoint, $body, $timestamp, 'GET');
 
     $requestPath = $host . $endpoint;
 
@@ -113,10 +113,10 @@ function testPostOrder(){
 
     $headers = [];
     $headers[] = "Content-Type:application/json";
-    $headers[] = "EX-API-KEY:".$key;
-    $headers[] = "EX-API-TIMESTAMP:".$timestamp;
-    $headers[] = "EX-API-PASSPHRASE:".$passphrase;
-    $headers[] = "EX-API-SIGN:".signature($endpoint, $body, $timestamp, 'POST');
+    $headers[] = "VAEX-API-KEY:".$key;
+    $headers[] = "VAEX-API-TIMESTAMP:".$timestamp;
+    $headers[] = "VAEX-API-PASSPHRASE:".$passphrase;
+    $headers[] = "VAEX-API-SIGN:".signature($endpoint, $body, $timestamp, 'POST');
 
     $requestPath = $host . $endpoint;
 
@@ -141,10 +141,10 @@ function testDeleteOrder(){
     $body = '';
     $headers = [];
     $headers[] = "Content-Type:application/json";
-    $headers[] = "EX-API-KEY:".$key;
-    $headers[] = "EX-API-TIMESTAMP:".$timestamp;
-    $headers[] = "EX-API-PASSPHRASE:".$passphrase;
-    $headers[] = "EX-API-SIGN:".signature($endpoint, $body, $timestamp, 'DELETE');
+    $headers[] = "VAEX-API-KEY:".$key;
+    $headers[] = "VAEX-API-TIMESTAMP:".$timestamp;
+    $headers[] = "VAEX-API-PASSPHRASE:".$passphrase;
+    $headers[] = "VAEX-API-SIGN:".signature($endpoint, $body, $timestamp, 'DELETE');
 
     $requestPath = $host . $endpoint;
 
@@ -168,10 +168,10 @@ function testListFills(){
 
     $headers = [];
     $headers[] = "Content-Type:application/json";
-    $headers[] = "EX-API-KEY:".$key;
-    $headers[] = "EX-API-TIMESTAMP:".$timestamp;
-    $headers[] = "EX-API-PASSPHRASE:".$passphrase;
-    $headers[] = "EX-API-SIGN:".signature($endpoint, $body, $timestamp, 'GET');
+    $headers[] = "VAEX-API-KEY:".$key;
+    $headers[] = "VAEX-API-TIMESTAMP:".$timestamp;
+    $headers[] = "VAEX-API-PASSPHRASE:".$passphrase;
+    $headers[] = "VAEX-API-SIGN:".signature($endpoint, $body, $timestamp, 'GET');
 
     $requestPath = $host . $endpoint;
 
