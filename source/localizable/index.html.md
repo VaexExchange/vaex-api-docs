@@ -812,7 +812,7 @@ chain | String | *[Optional]* The chain name of currency, e.g. The available val
 Field | Description
 --------- | ------- 
 address | Deposit address
-memo | Address remark. If there’s no remark, it is empty. When you [withdraw](#apply-withdraw) from other platforms to the KuCoin, you need to fill in memo(tag). If you do not fill memo (tag), your deposit may not be available, please be cautious.
+memo | Address remark. If there’s no remark, it is empty. When you [withdraw](#apply-withdraw) from other platforms to the Vaex, you need to fill in memo(tag). If you do not fill memo (tag), your deposit may not be available, please be cautious.
 chain | The chain name of currency, e.g. The available value for USDT are OMNI, ERC20, TRC20, default is ERC20. The available value for BTC are Native, Segwit, TRC20, the parameters are bech32, btc, trx, default is Native. 
 
 
@@ -875,7 +875,7 @@ status | String | No | Status. Available value: `PROCESSING`, `SUCCESS`, and `FA
 Field | Description
 --------- | ------- | -----------
 address | Deposit address
-memo |Address remark. If there’s no remark, it is empty. When you [withdraw](#apply-withdraw) from other platforms to the KuCoin, you need to fill in memo(tag). If you do not fill memo (tag), your deposit may not be available, please be cautious.
+memo |Address remark. If there’s no remark, it is empty. When you [withdraw](#apply-withdraw) from other platforms to the Vaex, you need to fill in memo(tag). If you do not fill memo (tag), your deposit may not be available, please be cautious.
 amount | Deposit amount
 fee | Fees charged for deposit
 currency | Currency
