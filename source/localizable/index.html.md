@@ -873,7 +873,7 @@ status | String | No | Status. Available value: `PROCESSING`, `SUCCESS`, and `FA
 
 ### RESPONSES
 Field | Description
---------- | ------- | -----------
+--------- | -------
 address | Deposit address
 memo |Address remark. If there’s no remark, it is empty. When you [withdraw](#apply-withdraw) from other platforms to the Vaex, you need to fill in memo(tag). If you do not fill memo (tag), your deposit may not be available, please be cautious.
 amount | Deposit amount
